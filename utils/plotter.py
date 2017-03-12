@@ -2,8 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_predict_accuracity(predicted, true_values):
+def plot_predict_accuracity(predicted, true_values,title=""):
     fig, ax = plt.subplots()
+    plt.title(title)
     ax.scatter(true_values, predicted)
     ax.plot([true_values.min(), true_values.max()], [true_values.min(), true_values.max()],
             'k--', lw=4)
