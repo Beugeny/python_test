@@ -11,9 +11,12 @@ def eng(df):
 
     res["LotArea"] = df["LotArea"]
 
-    poly = PolynomialFeatures(4, include_bias=False)
-    res = poly.fit_transform(res)
+    # poly = PolynomialFeatures(4, include_bias=False)
+    # res2 = poly.fit_transform(res)
 
-    res = preprocessing.scale(res)
+    # res2 = preprocessing.scale(res2)
+    # res["LotArea"] = res2[0]
 
+    # TODO Y values can be skipped after feature eng
+    res["SalePrice"] = df["SalePrice"]
     return res
