@@ -18,14 +18,6 @@ import matplotlib.pyplot as plt
 from utils.scoring import rmse_scoring, rmlse_scoring, rmsle
 
 
-def regression_res(y_pred, y_true):
-    A = ((y_pred - y_true) ** 2).sum()
-    B = ((y_true - y_true.mean()) ** 2).sum()
-    print("sq_error={0}".format(A))
-    # print("sum(y-mean(y))^2={0}".format(B))
-    print("score={0}".format(1 - A / B))
-
-
 def cross_val(clf, X, y):
     # print("Cross Validation: \n{0}".format(clf))
     return cross_val_score(clf, X, y, cv=4, scoring=rmlse_scoring).mean()
@@ -56,11 +48,12 @@ def regression_fit(X, y):
     mdl["names"] = mdl.index.values
 
     # SVR
-    mdl["Models"].iloc[3] = grid_search_cv(SVR(),
-                                           [{'kernel': ["rbf", "sigmoid"],
-                                             # "degree": np.arange(1, 10),
-                                             "C": [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 100000,1000000]}],
-                                           x_train, y_train)
+    # mdl["Models"].iloc[3] = grid_search_cv(SVR(),
+    #                                        [{'kernel': ["rbf", "sigmoid"],
+    #                                          # "degree": np.arange(1, 10),
+    #                                          "C": [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 100000,1000000]}],
+    #                                        x_train, y_train)
+
     # KNeig
     mdl["Models"].iloc[4] = grid_search_cv(KNeighborsRegressor(),
                                            [{'n_neighbors': np.arange(2, 15), 'weights': ["uniform", "distance"]}],
@@ -68,10 +61,11 @@ def regression_fit(X, y):
 
     mdl["score_train"] = mdl["Models"].apply(
         lambda x: cross_val(x, x_train, y_train))
-    mdl["score_test"] = mdl["Models"].apply(
-        lambda x: cross_val(x, x_test, y_test))
 
     mdl["Models"].apply(lambda x: x.fit(x_train, y_train))  # TODO cross validation fit
+    mdl["score_test"] = mdl["Models"].apply(
+        lambda x: rmlse_scoring(x, x_test, y_test))
+
     mdl["predict_train"] = mdl["Models"].apply(lambda x: x.predict(x_train))
     mdl["predict_test"] = mdl["Models"].apply(lambda x: x.predict(x_test))
     print(mdl[["score_train", "score_test"]])
@@ -88,6 +82,12 @@ def regression_fit(X, y):
     test_score = best_score["score_test"].values[0]
 
     print("Best clf={0}. rmse={1}/{2}".format(clf_name, train_score, test_score))
+
+    # TODO
+    # 1 Вынести подбор метапараметров отдельно
+    # 2 Результат 1 уровня формировать как новые фичи образованные предсказаниями классификатора
+    # 3 Результат 2 уровня Как новая модель от данных 1 уровня (должна проходить все те же этапы)
+    # 4 Попробовать найти метапараметры разных моделей, может что-то будет лучше
 
     return {"clf": clf,
             "predict_train": best_score["predict_train"].values[0],
