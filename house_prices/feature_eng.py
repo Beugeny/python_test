@@ -11,4 +11,12 @@ def eng(df):
         raise ValueError('Lot area values can not be nan')
 
     res["LotArea"] = df["LotArea"]
+
+
+    # poly = PolynomialFeatures(3, include_bias=False)
+    # res = poly.fit_transform(res)
+
+    # scaler = preprocessing.StandardScaler().fit(res)
+    # res = scaler.transform(res)
+
     return res

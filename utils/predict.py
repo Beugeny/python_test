@@ -1,4 +1,6 @@
 from sklearn import preprocessing
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
@@ -13,7 +15,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.tree import DecisionTreeRegressor
 import matplotlib.pyplot as plt
 
-from utils.scoring import rmse_scoring, rmlse_scoring
+from utils.scoring import rmse_scoring, rmlse_scoring, rmsle
 
 
 def regression_res(y_pred, y_true):
@@ -29,11 +31,17 @@ def cross_val(clf, X, y):
     return cross_val_score(clf, X, y, cv=4, scoring=rmlse_scoring).mean()
 
 
-def fit_predict(X, y):
-    poly = PolynomialFeatures(2, include_bias=False)
-    # X = poly.fit_transform(X)
-    # X = preprocessing.scale(X)
+def grid_search_cv(clf, tuned_params, X, y):
+    sc1 = make_scorer(rmsle, greater_is_better=False)
+    grd = GridSearchCV(clf, tuned_params, cv=2, scoring=sc1, verbose=1)
 
+    grd.fit(X, y)
+    print("Best={0}, score={1}".format(grd.best_params_, cross_val(grd.best_estimator_, X, y)))
+    print(grd.best_estimator_)
+    return grd.best_estimator_
+
+
+def regression_fit(X, y):
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     mdl = pd.DataFrame()
@@ -45,7 +53,19 @@ def fit_predict(X, y):
         KNeighborsRegressor(),
     ])
     mdl.index = ["LinReg", "DecisionTree", "RandForest", "SVR", "KNeig"]
-    mdl["names"] = mdl.index.values;
+    mdl["names"] = mdl.index.values
+
+    # SVR
+    mdl["Models"].iloc[3] = grid_search_cv(SVR(),
+                                           [{'kernel': ["rbf", "sigmoid"],
+                                             # "degree": np.arange(1, 10),
+                                             "C": [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 100000,1000000]}],
+                                           x_train, y_train)
+    # KNeig
+    mdl["Models"].iloc[4] = grid_search_cv(KNeighborsRegressor(),
+                                           [{'n_neighbors': np.arange(2, 15), 'weights': ["uniform", "distance"]}],
+                                           x_train, y_train)
+
     mdl["score_train"] = mdl["Models"].apply(
         lambda x: cross_val(x, x_train, y_train))
     mdl["score_test"] = mdl["Models"].apply(
