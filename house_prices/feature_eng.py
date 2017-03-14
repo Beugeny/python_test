@@ -1,29 +1,37 @@
-from pandas import Series
 import pandas as pd
 from sklearn import preprocessing
-from sklearn.preprocessing import PolynomialFeatures
 
 
-def eng(df):
+def numeric_correlation(df, targetName):
+    df = pd.DataFrame(df)
+    num_columns = df[df.columns[df.dtypes != object]]
+
+    cor = num_columns.corr()
+    cor = abs(cor)
+    print(cor[targetName].sort_values(ascending=False))
+    return cor[targetName].sort_values(ascending=False)
+
+
+def eng(df, corr_values):
+    print("Feature engineering")
     # Этот метод не должен удалять ни один столбец
+    df = pd.DataFrame(df)
     res = pd.DataFrame()
-    if len(df["LotArea"]) != len(df["LotArea"].dropna()):
-        raise ValueError('Lot area values can not be nan')
 
-    if len(df["HouseStyle"]) != len(df["HouseStyle"].dropna()):
-        raise ValueError('HouseStyle values can not be nan')
+    for column in corr_values.index.values:
+        if column != "SalePrice" and column != "Id" and corr_values[column] > 0.1:
+            print(column, corr_values[column])
+            if len(df[column]) != len(df[column].dropna()):
+                print('"{0}" column contain {1} nan values'.format(column, len(df[column]) - len(df[column].dropna())))
+                df[column] = df[column].fillna(0)  # TODO fill with fit value
+            res[column] = df[column]
 
-    res["LotArea"] = df["LotArea"]
-
-    mapping = {'2.5Fin': 1, '2.5Unf': 2, '1.5Fin': 3, '1Story': 4, '2Story': 5, 'SLvl': 6, 'SFoyer': 7, '1.5Unf': 8}
-    res["HouseStyle"] = df.replace({'HouseStyle': mapping})["HouseStyle"]
-    # print(set(res["HouseStyle"]))
 
     # poly = PolynomialFeatures(3, include_bias=False)
     # res = poly.fit_transform(res)
     # res = poly.fit_transform(res)
 
-    scaler = preprocessing.StandardScaler().fit(res)
-    res = scaler.transform(res)
+    # scaler = preprocessing.StandardScaler().fit(res)
+    # res = scaler.transform(res)
 
     return res
