@@ -2,11 +2,12 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 import house_prices.feature_eng as fe
-from utils.plotter import plot_predict_accuracity
-from utils.predict import select_model, predict_model
+from utils.model_selection import select_model
+from utils.plotter import plot_predict_accuracity, corr_plot
+from utils.prediction import predict_model
 from utils.submit import submit
 
-f = "C:\\data\\projects\\python\\data\\house_price\\"
+f = "D:\\resources\\machineLearning\\python_test\\data\\house_price\\"
 df_test = pd.read_csv(f + "test.csv")
 df_train = pd.read_csv(f + "train.csv")
 
@@ -20,6 +21,7 @@ x_train, x_test, y_train, y_test = train_test_split(df_train.drop("SalePrice", a
 
 crl = x_train
 crl["SalePrice"] = y_train
+
 corr_values = fe.numeric_correlation(crl, "SalePrice")
 
 x_train = fe.eng(x_train, corr_values)
@@ -37,8 +39,6 @@ super_result = res["clf"].predict(x_super_test)
 submit(df_test["Id"], super_result, f, "Id", "SalePrice")
 
 # See other data columns (Maby not numeric)
-# Numeric data with low correlation
-# Remove high correlated data
 # two level predictions
 # Maybe prediction with several models (maybe not)
 # try to fit other parameters of model

@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn import preprocessing
 
 
 def numeric_correlation(df, targetName):
@@ -8,7 +7,9 @@ def numeric_correlation(df, targetName):
 
     cor = num_columns.corr()
     cor = abs(cor)
-    print(cor[targetName].sort_values(ascending=False))
+    # cor2 = cor.apply(lambda s: s.apply(lambda x: (x if x > 0.5 else 0)))
+    # print(cor2)
+    # print(cor[targetName].sort_values(ascending=False))
     return cor[targetName].sort_values(ascending=False)
 
 
@@ -18,14 +19,15 @@ def eng(df, corr_values):
     df = pd.DataFrame(df)
     res = pd.DataFrame()
 
+    filter_set = set(["SalePrice", "Id"])
+
     for column in corr_values.index.values:
-        if column != "SalePrice" and column != "Id" and corr_values[column] > 0.1:
+        if column not in filter_set and corr_values[column] > 0.1:
             print(column, corr_values[column])
             if len(df[column]) != len(df[column].dropna()):
-                print('"{0}" column contain {1} nan values'.format(column, len(df[column]) - len(df[column].dropna())))
-                df[column] = df[column].fillna(0)  # TODO fill with fit value
+                # print('"{0}" column contain {1} nan values'.format(column, len(df[column]) - len(df[column].dropna())))
+                df[column] = df[column].fillna(df[column].mean())  # TODO smart fill missing item
             res[column] = df[column]
-
 
     # poly = PolynomialFeatures(3, include_bias=False)
     # res = poly.fit_transform(res)
