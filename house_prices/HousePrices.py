@@ -35,3 +35,11 @@ x_super_test = fe.eng(df_test, corr_values)
 super_result = res["clf"].predict(x_super_test)
 
 submit(df_test["Id"], super_result, f, "Id", "SalePrice")
+
+# See other data columns (Maby not numeric)
+# Numeric data with low correlation
+# Remove high correlated data
+# two level predictions
+# Maybe prediction with several models (maybe not)
+# try to fit other parameters of model
+# grid cv=5
