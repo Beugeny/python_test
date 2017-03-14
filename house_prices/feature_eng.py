@@ -14,7 +14,7 @@ def numeric_correlation(df, targetName):
 
 
 def eng(df, corr_values):
-    print("Feature engineering")
+    # print("Feature engineering")
     # Этот метод не должен удалять ни один столбец
     df = pd.DataFrame(df)
     res = pd.DataFrame()
@@ -23,7 +23,7 @@ def eng(df, corr_values):
 
     for column in corr_values.index.values:
         if column not in filter_set and corr_values[column] > 0.1:
-            print(column, corr_values[column])
+            # print(column, corr_values[column])
             if len(df[column]) != len(df[column].dropna()):
                 # print('"{0}" column contain {1} nan values'.format(column, len(df[column]) - len(df[column].dropna())))
                 df[column] = df[column].fillna(df[column].mean())  # TODO smart fill missing item

@@ -41,5 +41,3 @@ submit(df_test["Id"], super_result, f, "Id", "SalePrice")
 # See other data columns (Maby not numeric)
 # two level predictions
 # Maybe prediction with several models (maybe not)
-# try to fit other parameters of model
-# grid cv=5
