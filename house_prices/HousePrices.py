@@ -3,11 +3,11 @@ from sklearn.model_selection import train_test_split
 
 import house_prices.feature_eng as fe
 from utils.model_selection import select_model
-from utils.plotter import plot_predict_accuracity, corr_plot
+from utils.plotter import plot_predict_accuracity, corr_plot, corr_zoom
 from utils.prediction import predict_model
 from utils.submit import submit
 
-f = "D:\\resources\\machineLearning\\python_test\\data\\house_price\\"
+f = "C:\\data\\projects\\python\\data\\house_price\\"
 df_test = pd.read_csv(f + "test.csv")
 df_train = pd.read_csv(f + "train.csv")
 
@@ -23,6 +23,11 @@ crl = x_train
 crl["SalePrice"] = y_train
 
 corr_values = fe.numeric_correlation(crl, "SalePrice")
+
+# total = x_train.isnull().sum().sort_values(ascending=False)
+# percent = (x_train.isnull().sum() / x_train.isnull().count()).sort_values(ascending=False)
+# missing_data = pd.concat([total, percent], axis=1, keys=['Total', 'Percent'])
+# print(missing_data)
 
 x_train = fe.eng(x_train, corr_values)
 x_test = fe.eng(x_test, corr_values)
