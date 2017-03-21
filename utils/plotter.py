@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import pandas as pd
+from scipy.stats import norm, stats
 
 
 def plot_predict_accuracity(predicted, true_values, title=""):
@@ -31,6 +32,17 @@ def show_two_plot(x1, y1, x2, y2):
     plt.show()
 
 
+def normal_plot(data):
+    sns.distplot(data, fit=norm)
+    sns.plt.show()
+
+
+def pair_plot(data):
+    sns.set()
+    sns.pairplot(data, size=2.5)
+    sns.plt.show()
+
+
 def corr_plot(cor):
     colormap = plt.cm.viridis
     plt.figure(figsize=(12, 12))
@@ -56,9 +68,9 @@ def corr_zoom(cor, data, targetName, k=10):
     plt.yticks(rotation=0)
     plt.show()
 
-
-def relation_plot(target, column, target_name):
-    data = pd.concat([target, column], axis=1)
-    f, ax = plt.subplots(figsize=(8, 6))
-    fig = sns.boxplot(x=var, y=target_name, data=data)
-    fig.axis(ymin=0, ymax=pd.DataFrame(target).max())
+# def relation_plot(target, column,target_name,columnName):
+#     data = pd.concat([target, column], axis=1)
+#     f, ax = plt.subplots(figsize=(8, 6))
+#     fig = sns.boxplot(x=columnName, y=target_name, data=data)
+#     fig.axis(ymin=0, ymax=pd.DataFrame(target).max())
+#     sns.plt.show()
