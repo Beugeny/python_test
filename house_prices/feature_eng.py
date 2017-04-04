@@ -28,7 +28,7 @@ def eng(df, corr_values):
         ["SalePrice", "Id", "PoolQC", "MiscFeature", "Alley", "Fence", "FireplaceQu", "LotFrontage", "GarageYrBlt",
          'TotRmsAbvGrd'])
 
-    # TODO удалить из данных выбросы (изучить мат часть)
+
     # TODO Нормализация данных (изучить мат часть),
     # TODO Homoscedasticity, Linearity,Absence of correlated errors  Ooooooo!!!!!!!!
     # TODO хорошенько провести удаление коррелированных столбцов(автоматическое) и столбцов с пустыми переменными
