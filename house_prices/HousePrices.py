@@ -30,9 +30,8 @@ X = fe.eng(df_train, corr_values)
 X['SalePrice'] = df_train['SalePrice']
 
 print(len(X))
-X=X[(X.GrLivArea < 4000) | (X.SalePrice > 300000)]
+X = X[(X.GrLivArea < 4000) | (X.SalePrice > 300000)]
 print(len(X))
-
 
 # plotter.normal_plot(X['GrLivArea'])
 # plotter.pair_plot(X[['GrLivArea', 'SalePrice', '1stFlrSF']])
@@ -45,6 +44,7 @@ X['GrLivArea'] = np.log(X['GrLivArea'])
 X['SalePrice'] = np.log(X['SalePrice'])
 X['1stFlrSF'] = np.log(X['1stFlrSF'])
 
+# TODO One random split can be not good. The better use k splits.Get mean error (cross validation)
 x_train, x_test, y_train, y_test = train_test_split(X.drop("SalePrice", axis=1),
                                                     X["SalePrice"],
                                                     test_size=0.33, random_state=42)
@@ -62,7 +62,3 @@ x_super_test['1stFlrSF'] = np.log(x_super_test['1stFlrSF'])
 super_result = res["clf"].predict(x_super_test)
 
 submit(df_test["Id"], np.exp(super_result), f, "Id", "SalePrice")
-
-# See other data columns (Maby not numeric)
-# two level predictions
-# Maybe prediction with several models (maybe not)
